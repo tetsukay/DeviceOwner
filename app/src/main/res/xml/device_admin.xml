@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lock Task / keyguard / status bar 等は Device Owner であれば利用できるため、追加のポリシー宣言は不要 -->
+<device-admin>
+    <uses-policies />
+</device-admin>
