@@ -105,7 +105,7 @@ class LauncherActivity : ComponentActivity() {
 
         val target = s.targetPackage
         if (target == null) {
-            uiState = uiState.copy(message = "対象アプリが未設定です。右上を 5 秒長押しして管理メニューから設定してください。")
+            uiState = uiState.copy(message = "対象アプリが未設定です。右上をロングタップして管理メニューから設定してください。")
             return
         }
         // 未インストールなら起動ループを起こさずエラー表示にとどめる

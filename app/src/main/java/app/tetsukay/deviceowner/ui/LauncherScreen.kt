@@ -1,8 +1,6 @@
 package app.tetsukay.deviceowner.ui
 
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,8 +47,6 @@ data class LauncherUiState(
 
 const val SET_DEVICE_OWNER_COMMAND =
     "adb shell dpm set-device-owner app.tetsukay.deviceowner/.AdminReceiver"
-
-private const val SECRET_LONG_PRESS_MS = 5_000L
 
 @Composable
 fun LauncherScreen(
@@ -107,7 +103,7 @@ fun LauncherScreen(
                 }
             }
 
-            // 右上の隠しエリア。5 秒長押しで PIN 入力へ。
+            // 右上の隠しエリア。ロングタップでカウントダウンを止めて PIN 入力へ。
             SecretCorner(
                 onTriggered = onSecretLongPress,
                 modifier = Modifier.align(Alignment.TopEnd).size(120.dp),
@@ -167,12 +163,8 @@ private fun SecretCorner(onTriggered: () -> Unit, modifier: Modifier = Modifier)
     val currentOnTriggered by rememberUpdatedState(onTriggered)
     Box(
         modifier.pointerInput(Unit) {
-            awaitEachGesture {
-                awaitFirstDown(requireUnconsumed = false)
-                // 指が離れる（またはキャンセル）前にタイムアウトしたら発火
-                val released = withTimeoutOrNull(SECRET_LONG_PRESS_MS) { waitForUpOrCancellation(); true }
-                if (released == null) currentOnTriggered()
-            }
+            // 判定時間は端末のロングタップ設定に従う（デフォルト 400ms）
+            detectTapGestures(onLongPress = { currentOnTriggered() })
         },
     )
 }
